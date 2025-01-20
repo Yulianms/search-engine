@@ -1,10 +1,7 @@
 package cards.poketracker.searchengine.legality;
 
 import cards.poketracker.searchengine.card.Card;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "legalities")
@@ -14,6 +11,7 @@ public class Legality {
     private Integer id;
 
     @OneToOne
+    @JoinColumn(name = "card_id")
     private Card card;
 
     private Boolean unlimited;
@@ -31,7 +29,6 @@ public class Legality {
     public void setId(Integer id) {
         this.id = id;
     }
-
 
     public Card getCard() {
         return card;

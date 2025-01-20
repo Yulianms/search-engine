@@ -48,8 +48,8 @@ public class Card {
 
     private String level;
 
-    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE},mappedBy = "card")
-    private Legality legalities;
+    @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "card")
+    private Legality legality;
 
     public Card() {
     }
@@ -198,11 +198,11 @@ public class Card {
         this.level = level;
     }
 
-    public Legality getLegalities() {
-        return legalities;
+    public Legality getLegality() {
+        return legality;
     }
 
-    public void setLegalities(Legality legalities) {
-        this.legalities = legalities;
+    public void setLegality(Legality legality) {
+        this.legality = legality;
     }
 }

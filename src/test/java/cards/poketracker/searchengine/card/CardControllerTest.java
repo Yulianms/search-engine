@@ -1,5 +1,7 @@
 package cards.poketracker.searchengine.card;
 
+import cards.poketracker.searchengine.card.dto.CardDto;
+import cards.poketracker.searchengine.rarity.Rarity;
 import cards.poketracker.searchengine.system.StatusCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +37,9 @@ class CardControllerTest {
 
     @MockBean
     CardService cardService;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     List<Card> cards;
 
@@ -108,5 +113,144 @@ class CardControllerTest {
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
                 .andExpect(jsonPath("$.message").value("Could not find card with ID: scvl-gg"))
                 .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    void testFindAllCardsSuccess() throws Exception {
+        // Given
+        given(this.cardService.findAll()).willReturn(this.cards);
+
+        // When and then
+        this.mockMvc.perform(get("/api/v1/cards").accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Find All Success"))
+                .andExpect(jsonPath("$.data", Matchers.hasSize(this.cards.size())))
+                .andExpect(jsonPath("$.data[0].id").value("scvl-we"))
+                .andExpect(jsonPath("$.data[1].id").value("scvl-dw"));
+    }
+
+    @Test
+    void testAddCardSuccess() throws Exception {
+        // Given
+        Rarity r = new Rarity();
+        r.setName("Holo Rare");
+
+        CardDto cardDto = new CardDto("dmpl-99",
+                "Charizard",
+                "Pokemon",
+                "Stage 2",
+                "Fire, Flying",
+                "Charmeleon",
+                r,
+                3,
+                "images/small",
+                "images/large",
+                34,
+                null,
+                null);
+        String json = this.objectMapper.writeValueAsString(cardDto);
+
+        Card savedCard = new Card();
+        savedCard.setId("dmpl-99");
+        savedCard.setName("Charizard");
+        savedCard.setCategory("Pokemon");
+        savedCard.setRarity(r);
+        savedCard.setTypes("Fire, Flying");
+        savedCard.setSubtype("Stage 2");
+        savedCard.setEvolvesFrom("Charmeleon");
+        savedCard.setPokedexNumber(3);
+        savedCard.setSmImg("images/small");
+        savedCard.setLgImg("images/large");
+        savedCard.setCardNumber(34);
+        savedCard.setSet(null);
+
+        given(this.cardService.update(eq("dmpl-99"), Mockito.any(Card.class))).willReturn(savedCard);
+
+        // When and then
+        this.mockMvc.perform(post("/api/v1/cards").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Add Success"))
+                .andExpect(jsonPath("$.data.id").isNotEmpty())
+                .andExpect(jsonPath("$.data.name").value("Charizard"));
+    }
+
+    @Test
+    void testUpdateCardSuccess() throws Exception {
+        // Given
+        Rarity r = new Rarity();
+        r.setName("Holo Rare");
+
+        CardDto cardDto = new CardDto("dmpl-99",
+                "Charizard",
+                "Pokemon",
+                "Stage 2",
+                "Fire, Flying",
+                "Charmeleon",
+                r,
+                3,
+                "images/small",
+                "images/large",
+                34,
+                null,
+                null);
+        String json = this.objectMapper.writeValueAsString(cardDto);
+
+        Card updatedCard = new Card();
+        updatedCard.setId("dmpl-99");
+        updatedCard.setName("Charizard");
+        updatedCard.setCategory("Pokemon");
+        updatedCard.setRarity(r);
+        updatedCard.setTypes("Fire, Flying");
+        updatedCard.setSubtype("Stage 2");
+        updatedCard.setEvolvesFrom("Charmeleon");
+        updatedCard.setPokedexNumber(3);
+        updatedCard.setSmImg("images/small");
+        updatedCard.setLgImg("images/large");
+        updatedCard.setCardNumber(34);
+        updatedCard.setSet(null);
+
+        given(this.cardService.save(Mockito.any(Card.class))).willReturn(updatedCard);
+
+        // When and then
+        this.mockMvc.perform(put("/api/v1/cards/dmpl-99").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Update Success"))
+                .andExpect(jsonPath("$.data.id").value("dmpl-99"))
+                .andExpect(jsonPath("$.data.name").value(updatedCard.getName()));
+    }
+
+    @Test
+    void testUpdateCardErrorWithNoExistingId() throws Exception {
+        // Given
+        Rarity r = new Rarity();
+        r.setName("Holo Rare");
+
+        CardDto cardDto = new CardDto("dmpl-99",
+                "Charizard",
+                "Pokemon",
+                "Stage 2",
+                "Fire, Flying",
+                "Charmeleon",
+                r,
+                3,
+                "images/small",
+                "images/large",
+                34,
+                null,
+                null);
+        String json = this.objectMapper.writeValueAsString(cardDto);
+
+        given(this.cardService.update(eq("dmpl-99"), Mockito.any(Card.class))).willThrow(new CardNotFoundException("dmpl-99"));
+
+        // When and then
+        this.mockMvc.perform(put("/api/v1/cards/dmpl-99").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+                .andExpect(jsonPath("$.message").value("Could not find card with ID: dmpl-99"))
+                .andExpect(jsonPath("$.data").isEmpty());
+
     }
 }

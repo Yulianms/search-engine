@@ -1,5 +1,6 @@
 package cards.poketracker.searchengine.card.dto;
 
+import cards.poketracker.searchengine.legality.dto.LegalityDto;
 import cards.poketracker.searchengine.rarity.Rarity;
 import cards.poketracker.searchengine.set.dto.SetDto;
 
@@ -14,5 +15,6 @@ public record CardDto(String id,
                       String smImg,
                       String lgImg,
                       Integer cardNumber,
-                      SetDto set) {
+                      SetDto set,
+                      LegalityDto legality) {
 }
