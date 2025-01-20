@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: search-engine
+  datasource:
+    url: jdbc:h2:mem:search
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    show-sql: true
