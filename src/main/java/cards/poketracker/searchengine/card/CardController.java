@@ -27,14 +27,14 @@ public class CardController {
         this.cardToCardDtoConverter = cardToCardDtoConverter;
     }
 
-    @GetMapping("/api/v1/cards/{cardId}")
+    @GetMapping("${api.endpoint.base-url}/cards/{cardId}")
     public Result findCardById(@PathVariable String cardId) {
         Card foundCard = this.cardService.findById(cardId);
         CardDto cardDto = this.cardToCardDtoConverter.convert(foundCard);
         return new Result(true, StatusCode.SUCCESS, "Find One Success", cardDto);
     }
 
-    @GetMapping("/api/v1/cards")
+    @GetMapping("${api.endpoint.base-url}/cards")
     public Result findAllCards() {
         List<Card> foundCards = this.cardService.findAll();
         // Convert list of cards to cardsDtos
@@ -44,7 +44,7 @@ public class CardController {
         return new Result(true, StatusCode.SUCCESS, "Find All Success", cardDtos);
     }
 
-    @PostMapping("/api/v1/cards")
+    @PostMapping("${api.endpoint.base-url}/cards")
     public Result addCard(@RequestBody Card card) {
         // Is not recognizing the request body of legality
         if (card.getLegality() != null) {
@@ -55,7 +55,7 @@ public class CardController {
         return new Result(true, StatusCode.SUCCESS, "Add Success", this.cardToCardDtoConverter.convert(card));
     }
 
-    @PutMapping("/api/v1/cards/{cardId}")
+    @PutMapping("${api.endpoint.base-url}/cards/{cardId}")
     public Result updateCard(@PathVariable String cardId, @RequestBody Card card) {
         Card updatedCard = this.cardService.update(cardId, card);
         return new Result(true, StatusCode.SUCCESS, "Update Success", this.cardToCardDtoConverter.convert(updatedCard));

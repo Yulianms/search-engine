@@ -2,6 +2,7 @@ package cards.poketracker.searchengine.card;
 
 import cards.poketracker.searchengine.rarity.Rarity;
 import cards.poketracker.searchengine.set.Set;
+import cards.poketracker.searchengine.system.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -226,7 +227,7 @@ class CardServiceTest {
 
         given(cardRepo.findById("swsh-93")).willReturn(Optional.empty());
         // When
-        assertThrows(CardNotFoundException.class, () -> cardService.update("swsh-93", update));
+        assertThrows(ObjectNotFoundException.class, () -> cardService.update("swsh-93", update));
 
         // Then
         verify(cardRepo, times(1)).findById("swsh-93");

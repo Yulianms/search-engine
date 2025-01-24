@@ -3,6 +3,7 @@ package cards.poketracker.searchengine.card;
 import cards.poketracker.searchengine.card.dto.CardDto;
 import cards.poketracker.searchengine.rarity.Rarity;
 import cards.poketracker.searchengine.system.StatusCode;
+import cards.poketracker.searchengine.system.exception.ObjectNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,6 +44,9 @@ class CardControllerTest {
     ObjectMapper objectMapper;
 
     List<Card> cards;
+
+    @Value("${api.endpoint.base-url}")
+    String baseUrl;
 
     @BeforeEach
     void setUp() {
@@ -94,7 +99,7 @@ class CardControllerTest {
         given(this.cardService.findById("scvl-gg")).willReturn(this.cards.get(3));
 
         // When and then
-        this.mockMvc.perform(get("/api/v1/cards/scvl-gg").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get(this.baseUrl + "/cards/scvl-gg").accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Find One Success"))
@@ -105,10 +110,10 @@ class CardControllerTest {
     @Test
     void testFindCardByIdNotFound() throws Exception {
         // Given
-        given(this.cardService.findById("scvl-gg")).willThrow(new CardNotFoundException("scvl-gg"));
+        given(this.cardService.findById("scvl-gg")).willThrow(new ObjectNotFoundException("card", "scvl-gg"));
 
         // When and then
-        this.mockMvc.perform(get("/api/v1/cards/scvl-gg").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get(this.baseUrl + "/cards/scvl-gg").accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(false))
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
                 .andExpect(jsonPath("$.message").value("Could not find card with ID: scvl-gg"))
@@ -121,7 +126,7 @@ class CardControllerTest {
         given(this.cardService.findAll()).willReturn(this.cards);
 
         // When and then
-        this.mockMvc.perform(get("/api/v1/cards").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get(this.baseUrl + "/cards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Find All Success"))
@@ -165,10 +170,10 @@ class CardControllerTest {
         savedCard.setCardNumber(34);
         savedCard.setSet(null);
 
-        given(this.cardService.update(eq("dmpl-99"), Mockito.any(Card.class))).willReturn(savedCard);
+        given(this.cardService.save(Mockito.any(Card.class))).willReturn(savedCard);
 
         // When and then
-        this.mockMvc.perform(post("/api/v1/cards").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post(this.baseUrl + "/cards").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Add Success"))
@@ -211,10 +216,10 @@ class CardControllerTest {
         updatedCard.setCardNumber(34);
         updatedCard.setSet(null);
 
-        given(this.cardService.save(Mockito.any(Card.class))).willReturn(updatedCard);
+        given(this.cardService.update(eq("dmpl-99"), Mockito.any(Card.class))).willReturn(updatedCard);
 
         // When and then
-        this.mockMvc.perform(put("/api/v1/cards/dmpl-99").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(put(this.baseUrl + "/cards/dmpl-99").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Update Success"))
@@ -243,10 +248,10 @@ class CardControllerTest {
                 null);
         String json = this.objectMapper.writeValueAsString(cardDto);
 
-        given(this.cardService.update(eq("dmpl-99"), Mockito.any(Card.class))).willThrow(new CardNotFoundException("dmpl-99"));
+        given(this.cardService.update(eq("dmpl-99"), Mockito.any(Card.class))).willThrow(new ObjectNotFoundException("card", "dmpl-99"));
 
         // When and then
-        this.mockMvc.perform(put("/api/v1/cards/dmpl-99").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(put(this.baseUrl + "/cards/dmpl-99").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(false))
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
                 .andExpect(jsonPath("$.message").value("Could not find card with ID: dmpl-99"))
