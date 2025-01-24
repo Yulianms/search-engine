@@ -4,17 +4,18 @@ import cards.poketracker.searchengine.card.Card;
 import cards.poketracker.searchengine.card.CardRepository;
 import cards.poketracker.searchengine.legality.Legality;
 import cards.poketracker.searchengine.legality.LegalityRepository;
+import cards.poketracker.searchengine.pokeuser.PokeUser;
+import cards.poketracker.searchengine.pokeuser.PokeUserRepository;
 import cards.poketracker.searchengine.rarity.Rarity;
 import cards.poketracker.searchengine.rarity.RarityRepository;
 import cards.poketracker.searchengine.set.Set;
 import cards.poketracker.searchengine.set.SetRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DBDataInitializer implements CommandLineRunner {
-
-    private final CardRepository cardRepository;
 
     private final LegalityRepository legalityRepository;
 
@@ -22,11 +23,13 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private final SetRepository setRepository;
 
-    public DBDataInitializer(CardRepository cardRepository, LegalityRepository legalityRepository, RarityRepository rarityRepository, SetRepository setRepository) {
-        this.cardRepository = cardRepository;
+    private final PokeUserRepository pokeUserRepository;
+
+    public DBDataInitializer(LegalityRepository legalityRepository, RarityRepository rarityRepository, SetRepository setRepository, PokeUserRepository pokeUserRepository) {
         this.legalityRepository = legalityRepository;
         this.rarityRepository = rarityRepository;
         this.setRepository = setRepository;
+        this.pokeUserRepository = pokeUserRepository;
     }
 
     @Override
