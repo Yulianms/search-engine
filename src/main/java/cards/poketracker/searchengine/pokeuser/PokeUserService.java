@@ -2,17 +2,24 @@ package cards.poketracker.searchengine.pokeuser;
 
 import cards.poketracker.searchengine.system.exception.ObjectNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PokeUserService {
+public class PokeUserService implements UserDetailsService {
 
     private final PokeUserRepository pokeUserRepository;
 
-    public PokeUserService(PokeUserRepository pokeUserRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public PokeUserService(PokeUserRepository pokeUserRepository, PasswordEncoder passwordEncoder) {
         this.pokeUserRepository = pokeUserRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<PokeUser> findAll() {
@@ -26,6 +33,7 @@ public class PokeUserService {
 
     public PokeUser create(PokeUser pokeUser) {
         pokeUser.setId(null); // In case an ID is provided, forces Hibernate to threat it as a new entity
+        pokeUser.setPassword(passwordEncoder.encode(pokeUser.getPassword()));
         return this.pokeUserRepository.save(pokeUser);
     }
 
@@ -43,4 +51,10 @@ public class PokeUserService {
         this.pokeUserRepository.deleteById(userId);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return this.pokeUserRepository.findByUsername(username)
+                .map(pokeUser -> new UserPrincipal(pokeUser))
+                .orElseThrow( () -> new UsernameNotFoundException("Username " + username + " not found."));
+    }
 }

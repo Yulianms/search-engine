@@ -22,10 +22,6 @@ public class PokeUser {
     private String username;
 
     @NotEmpty(message = "Password is required.")
-    @Pattern(regexp = "^(?=.*[0-9])"
-            + "(?=.*[a-z])(?=.*[A-Z])"
-            + "(?=.*[@#$%^&+=])"
-            + "(?=\\S+$).{8,20}$", message = "Invalid password")
     private String password;
 
     @NotEmpty(message = "Email is required.")
