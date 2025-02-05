@@ -6,6 +6,7 @@ import cards.poketracker.searchengine.legality.Legality;
 import cards.poketracker.searchengine.legality.LegalityRepository;
 import cards.poketracker.searchengine.pokeuser.PokeUser;
 import cards.poketracker.searchengine.pokeuser.PokeUserRepository;
+import cards.poketracker.searchengine.pokeuser.PokeUserService;
 import cards.poketracker.searchengine.rarity.Rarity;
 import cards.poketracker.searchengine.rarity.RarityRepository;
 import cards.poketracker.searchengine.set.Set;
@@ -13,6 +14,8 @@ import cards.poketracker.searchengine.set.SetRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 @Component
 public class DBDataInitializer implements CommandLineRunner {
@@ -23,13 +26,13 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private final SetRepository setRepository;
 
-    private final PokeUserRepository pokeUserRepository;
+    private final PokeUserService pokeUserService;
 
-    public DBDataInitializer(LegalityRepository legalityRepository, RarityRepository rarityRepository, SetRepository setRepository, PokeUserRepository pokeUserRepository) {
+    public DBDataInitializer(LegalityRepository legalityRepository, RarityRepository rarityRepository, SetRepository setRepository, PokeUserService pokeUserService) {
         this.legalityRepository = legalityRepository;
         this.rarityRepository = rarityRepository;
         this.setRepository = setRepository;
-        this.pokeUserRepository = pokeUserRepository;
+        this.pokeUserService = pokeUserService;
     }
 
     @Override
@@ -248,5 +251,33 @@ public class DBDataInitializer implements CommandLineRunner {
         legalityRepository.save(l2);
         legalityRepository.save(l3);
         legalityRepository.save(l4);
+
+        PokeUser u1 = new PokeUser();
+        u1.setUsername("pedropascal");
+        u1.setPassword("Asdas@123");
+        u1.setEnabled(true);
+        u1.setEmail("pedropascal@gmail.com");
+        u1.setRoles("user admin");
+        u1.setMemberSince(new Date());
+
+        PokeUser u2 = new PokeUser();
+        u2.setUsername("yulianms");
+        u2.setPassword("Qwerty321@");
+        u2.setEnabled(true);
+        u2.setEmail("yulianms@gmail.com");
+        u2.setRoles("user");
+        u2.setMemberSince(new Date());
+
+        PokeUser u3 = new PokeUser();
+        u3.setUsername("harry");
+        u3.setPassword("123456asdaS@");
+        u3.setEnabled(true);
+        u3.setEmail("harry@gmail.com");
+        u3.setRoles("user");
+        u3.setMemberSince(new Date());
+
+        pokeUserService.create(u1);
+        pokeUserService.create(u2);
+        pokeUserService.create(u3);
     }
 }
