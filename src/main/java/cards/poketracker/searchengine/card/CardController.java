@@ -17,13 +17,10 @@ public class CardController {
 
     private final CardService cardService;
 
-    private final LegalityService legalityService;
-
     private final CardToCardDtoConverter cardToCardDtoConverter;
 
     public CardController(CardService cardService, LegalityService legalityService, CardToCardDtoConverter cardToCardDtoConverter) {
         this.cardService = cardService;
-        this.legalityService = legalityService;
         this.cardToCardDtoConverter = cardToCardDtoConverter;
     }
 

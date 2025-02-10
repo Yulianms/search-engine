@@ -2,6 +2,8 @@ package cards.poketracker.searchengine.system;
 
 import cards.poketracker.searchengine.card.Card;
 import cards.poketracker.searchengine.card.CardRepository;
+import cards.poketracker.searchengine.card.tracker.CardTracker;
+import cards.poketracker.searchengine.card.tracker.CardTrackerRepository;
 import cards.poketracker.searchengine.legality.Legality;
 import cards.poketracker.searchengine.legality.LegalityRepository;
 import cards.poketracker.searchengine.pokeuser.PokeUser;
@@ -11,11 +13,15 @@ import cards.poketracker.searchengine.rarity.Rarity;
 import cards.poketracker.searchengine.rarity.RarityRepository;
 import cards.poketracker.searchengine.set.Set;
 import cards.poketracker.searchengine.set.SetRepository;
+import cards.poketracker.searchengine.wishlist.Wishlist;
+import cards.poketracker.searchengine.wishlist.WishlistRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class DBDataInitializer implements CommandLineRunner {
@@ -28,11 +34,19 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private final PokeUserService pokeUserService;
 
-    public DBDataInitializer(LegalityRepository legalityRepository, RarityRepository rarityRepository, SetRepository setRepository, PokeUserService pokeUserService) {
+    private final CardTrackerRepository cardTrackerRepository;
+
+    private final WishlistRepository wishlistRepository;
+
+    private List<CardTracker> cardTrackers;
+
+    public DBDataInitializer(LegalityRepository legalityRepository, RarityRepository rarityRepository, SetRepository setRepository, PokeUserService pokeUserService, CardTrackerRepository cardTrackerRepository, WishlistRepository wishlistRepository) {
         this.legalityRepository = legalityRepository;
         this.rarityRepository = rarityRepository;
         this.setRepository = setRepository;
         this.pokeUserService = pokeUserService;
+        this.cardTrackerRepository = cardTrackerRepository;
+        this.wishlistRepository = wishlistRepository;
     }
 
     @Override
@@ -279,5 +293,44 @@ public class DBDataInitializer implements CommandLineRunner {
         pokeUserService.create(u1);
         pokeUserService.create(u2);
         pokeUserService.create(u3);
+
+        Wishlist wl1 = new Wishlist();
+        wl1.setUser(u1);
+        wl1.setId(1);
+        wl1.setCards(cardTrackers);
+
+        Wishlist wl2 = new Wishlist();
+        wl2.setUser(u2);
+        wl2.setId(2);
+        wl2.setCards(null);
+
+        CardTracker ct = new CardTracker();
+        ct.setCard(c1);
+        ct.setActive(true);
+        ct.setTargetPrice(40f);
+        ct.setWishlist(wl1);
+
+        CardTracker ct2 = new CardTracker();
+        ct2.setCard(c2);
+        ct2.setActive(false);
+        ct2.setTargetPrice(14f);
+        ct2.setWishlist(wl1);
+
+        CardTracker ct3 = new CardTracker();
+        ct3.setCard(c3);
+        ct3.setActive(true);
+        ct3.setTargetPrice(56f);
+        ct3.setWishlist(wl1);
+
+        // cardTrackers = new ArrayList<>();
+        // cardTrackers.add(ct);
+
+        // wishlistRepository.save(wl1);
+        // wishlistRepository.save(wl2);
+
+        // cardTrackerRepository.save(ct);
+        // cardTrackerRepository.save(ct2);
+        // cardTrackerRepository.save(ct3);
+
     }
 }

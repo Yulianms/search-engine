@@ -31,6 +31,11 @@ public class PokeUserService implements UserDetailsService {
                 .orElseThrow( () -> new ObjectNotFoundException("user", id));
     }
 
+    public PokeUser findByUsername(String username) {
+        return this.pokeUserRepository.findByUsername(username)
+                .orElseThrow( () -> new ObjectNotFoundException("user", username));
+    }
+
     public PokeUser create(PokeUser pokeUser) {
         pokeUser.setId(null); // In case an ID is provided, forces Hibernate to threat it as a new entity
         pokeUser.setPassword(passwordEncoder.encode(pokeUser.getPassword()));
