@@ -19,9 +19,6 @@ public class UserPrincipal implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Gets user's roles and maps them into a list of SimpleGrantedAuthority instances.
-        System.out.println(Arrays.stream(StringUtils.tokenizeToStringArray(this.pokeUser.getRoles(), " "))
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                .toList());
         return Arrays.stream(StringUtils.tokenizeToStringArray(this.pokeUser.getRoles(), " "))
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .toList();

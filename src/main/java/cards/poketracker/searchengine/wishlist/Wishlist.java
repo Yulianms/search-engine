@@ -19,4 +19,29 @@ public class Wishlist {
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "wishlist")
     private List<CardTracker> cards;
 
+    public Wishlist() {}
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public PokeUser getUser() {
+        return user;
+    }
+
+    public void setUser(PokeUser user) {
+        this.user = user;
+    }
+
+    public List<CardTracker> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<CardTracker> cards) {
+        this.cards = cards;
+    }
 }

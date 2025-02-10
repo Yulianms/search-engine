@@ -2,14 +2,14 @@ package cards.poketracker.searchengine.card.tracker;
 
 import cards.poketracker.searchengine.card.Card;
 import cards.poketracker.searchengine.wishlist.Wishlist;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 public class CardTracker {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     private Float targetPrice;
