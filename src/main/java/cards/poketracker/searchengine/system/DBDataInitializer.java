@@ -322,15 +322,15 @@ public class DBDataInitializer implements CommandLineRunner {
         ct3.setTargetPrice(56f);
         ct3.setWishlist(wl1);
 
-        cardTrackers = new ArrayList<>();
-        cardTrackers.add(ct);
+        // cardTrackers = new ArrayList<>();
+        // cardTrackers.add(ct);
 
-        wishlistRepository.save(wl1);
-        wishlistRepository.save(wl2);
+        // wishlistRepository.save(wl1);
+        // wishlistRepository.save(wl2);
 
-        cardTrackerRepository.save(ct);
-        cardTrackerRepository.save(ct2);
-        cardTrackerRepository.save(ct3);
+        // cardTrackerRepository.save(ct);
+        // cardTrackerRepository.save(ct2);
+        // cardTrackerRepository.save(ct3);
 
     }
 }
